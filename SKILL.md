@@ -19,7 +19,7 @@ the whole flow:
   title or body.
 - Commit as the repo's configured git identity; never set an agent name or email.
 
-RevoCall squash-merges, so a trailer on any branch commit ends up on `main`.
+If the repo squash-merges, a trailer on any branch commit ends up on `main`.
 Check before every push: `git log origin/<base>..HEAD --format='%an <%ae>%n%b' | grep -i -E 'co-authored|anthropic|claude'`
 must print nothing.
 
@@ -37,7 +37,7 @@ arguments already answer (for example `/johndoe-skill with-worktree agent-commit
 
 Then get the **name** and the **repo**. Take them from the user's request when it
 states them; otherwise ask in one short question. The name is a short kebab-case
-slug. If a ticket is mentioned (`RV-1234`, `REVOCALL-23`), keep it.
+slug. If a ticket is mentioned (`ABC-1234`, `PROJ-23`), keep it.
 
 Echo the choices back in one compact block before starting. The user can change
 any choice later by saying so.
@@ -90,8 +90,8 @@ trailing period, under about 72 characters.
 | bug-fix | `fix` |
 | task | the one that fits: `chore`, `refactor`, `docs`, `test`, `perf`, `ci`, `build` |
 
-The scope is the ticket (`RV-23`) or the area touched (`admin/frontend`,
-`warehouse`), following recent `git log --oneline` in the repo. Individual commits
+The scope is the ticket (`ABC-23`) or the area touched (`api/auth`,
+`frontend`), following recent `git log --oneline` in the repo. Individual commits
 may use a different fitting prefix than the task type, for example a `test` commit
 inside a feature. The body explains why in plain prose. Never add a trailer.
 
