@@ -23,6 +23,24 @@ If the repo squash-merges, a trailer on any branch commit ends up on `main`.
 Check before every push: `git log origin/<base>..HEAD --format='%an <%ae>%n%b' | grep -i -E 'co-authored|anthropic|claude'`
 must print nothing.
 
+## 0. Preflight: check the dependencies
+
+Before intake, check silently and adjust the flow:
+
+- **no-mistakes:** `command -v no-mistakes` succeeds and a `no-mistakes` skill
+  is in the available skills list. If either is missing, tell the user now,
+  before any work: step 5 can't run without it. Give the fix
+  (`<skill-dir>/install.sh` prints the install commands) and ask whether to
+  install first or go ahead and stop at a committed branch.
+- **superpowers:** `superpowers:*` skills are in the available skills list. If
+  not, drop `superpowers` from the iteration options in intake.
+- **create-worktree:** use the installed `create-worktree` skill when it's in
+  the list; otherwise read `<skill-dir>/deps/create-worktree/SKILL.md` and
+  follow it, running its scripts from `<skill-dir>/deps/create-worktree/scripts/`.
+
+Mention a missing dependency once, in one line each. Say nothing when all are
+present.
+
 ## 1. Intake: one round of questions
 
 Ask everything at once with AskUserQuestion. Skip any question the invocation
@@ -33,7 +51,8 @@ arguments already answer (for example `/johndoe-skill with-worktree agent-commit
    (current checkout).
 3. **Commits:** `agent-commit` (the agent commits) or `user-commit` (the agent
    stages and proposes a message; the user runs `git commit`).
-4. **Iteration:** `superpowers`, `bb`, or `plain` (see step 3).
+4. **Iteration:** `superpowers`, `bb`, or `plain` (see step 3). Offer only the
+   ones preflight found available.
 
 Then get the **name** and the **repo**. Take them from the user's request when it
 states them; otherwise ask in one short question. The name is a short kebab-case
@@ -48,7 +67,8 @@ Branch: `<prefix>/<ticket-lowercase>-<slug>`, or `<prefix>/<slug>` with no ticke
 where the prefix comes from the type (see Commit messages). Match the repo's
 convention from `git branch -a --sort=-committerdate | head -20` if it differs.
 
-- **with-worktree:** load the `create-worktree` skill and follow it with this
+- **with-worktree:** load the `create-worktree` skill (or the bundled copy, see
+  preflight) and follow it with this
   branch, based on a freshly fetched default branch. Then move the thread there
   with `update_environment_directory` when that tool exists; otherwise work by
   absolute path.
